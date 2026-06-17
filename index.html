@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#108474" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Waterdrops" />
+  <meta name="description" content="Local-only waterdrop tracker for packs, flavours, spending and streaks." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Waterdrops</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero card">
+      <div class="brand-row">
+        <div class="brand-mark" aria-hidden="true">💧</div>
+        <div>
+          <p class="eyebrow">Local-only PWA</p>
+          <h1>Waterdrops</h1>
+        </div>
+      </div>
+      <p class="hero-copy">Keep track of how many waterdrop® cubes you have left, what you spent, and your current streak — offline, on-device, and without login.</p>
+      <div class="hero-badges" id="source-note"></div>
+    </header>
+
+    <section class="stats-grid" aria-label="Summary stats">
+      <article class="stat card">
+        <span class="stat-label">Left</span>
+        <strong id="stat-left">0</strong>
+      </article>
+      <article class="stat card">
+        <span class="stat-label">Spent</span>
+        <strong id="stat-spent">€0.00</strong>
+      </article>
+      <article class="stat card">
+        <span class="stat-label">Per drink</span>
+        <strong id="stat-per-drink">€0.00</strong>
+      </article>
+      <article class="stat card">
+        <span class="stat-label">Streak</span>
+        <strong id="stat-streak">0 days</strong>
+      </article>
+    </section>
+
+    <section class="card section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Add a pack</p>
+          <h2>Fresh 12-pack</h2>
+        </div>
+        <button id="save-backup" class="ghost-btn" type="button">Export</button>
+      </div>
+      <div class="add-pack-row">
+        <label class="field">
+          <span>Flavour</span>
+          <select id="pack-flavour"></select>
+        </label>
+        <label class="field">
+          <span>Price</span>
+          <input id="pack-price" type="text" inputmode="decimal" readonly />
+        </label>
+        <button id="add-pack" class="primary-btn" type="button">Add 12</button>
+      </div>
+      <p class="helper">Uses the official waterdrop website price for the selected flavour.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Inventory</p>
+          <h2>Your flavours</h2>
+        </div>
+        <label class="search-wrap">
+          <span class="sr-only">Search flavours</span>
+          <input id="search" type="search" placeholder="Search flavours" />
+        </label>
+      </div>
+      <div id="inventory" class="inventory-grid"></div>
+    </section>
+
+    <section class="card section compact">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Backup</p>
+          <h2>Import / reset</h2>
+        </div>
+      </div>
+      <div class="backup-row">
+        <label class="file-btn">
+          <input id="import-file" type="file" accept="application/json" />
+          Import backup
+        </label>
+        <button id="reset-data" class="danger-btn" type="button">Reset all</button>
+      </div>
+      <p class="helper">Backups stay on your device. The app never sends anything to the cloud.</p>
+    </section>
+
+    <footer class="footer-note">
+      Prices and flavour list are based on the official waterdrop® website at the time of build.
+    </footer>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
