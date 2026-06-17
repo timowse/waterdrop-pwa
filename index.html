@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Waterdrops" />
-  <meta name="description" content="Local-only waterdrop tracker for packs, flavours, spending and streaks." />
+  <meta name="description" content="Lokal gespeicherter waterdrop® Tracker – offline, ohne Login." />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
@@ -15,94 +15,144 @@
   <title>Waterdrops</title>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="hero card">
-      <div class="brand-row">
-        <div class="brand-mark" aria-hidden="true">💧</div>
-        <div>
-          <p class="eyebrow">Local-only PWA</p>
-          <h1>Waterdrops</h1>
+  <div id="app">
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <main id="main">
+
+      <!-- ── HOME ── -->
+      <section id="view-home" class="view active">
+        <header class="view-header home-header">
+          <span class="header-logo">💧</span>
+          <span class="header-title">Waterdrops</span>
+        </header>
+
+        <div class="hero-block">
+          <div class="hero-count-wrap">
+            <span id="hero-left" class="hero-count">0</span>
+            <span class="hero-unit">Drops übrig</span>
+          </div>
         </div>
-      </div>
-      <p class="hero-copy">Keep track of how many waterdrop® cubes you have left, what you spent, and your current streak — offline, on-device, and without login.</p>
-      <div class="hero-badges" id="source-note"></div>
-    </header>
 
-    <section class="stats-grid" aria-label="Summary stats">
-      <article class="stat card">
-        <span class="stat-label">Left</span>
-        <strong id="stat-left">0</strong>
-      </article>
-      <article class="stat card">
-        <span class="stat-label">Spent</span>
-        <strong id="stat-spent">€0.00</strong>
-      </article>
-      <article class="stat card">
-        <span class="stat-label">Per drink</span>
-        <strong id="stat-per-drink">€0.00</strong>
-      </article>
-      <article class="stat card">
-        <span class="stat-label">Streak</span>
-        <strong id="stat-streak">0 days</strong>
-      </article>
-    </section>
-
-    <section class="card section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Add a pack</p>
-          <h2>Fresh 12-pack</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span id="s-streak" class="stat-val">0</span>
+            <span class="stat-lbl">Streak 🔥</span>
+          </div>
+          <div class="stat-card">
+            <span id="s-drinks" class="stat-val">0</span>
+            <span class="stat-lbl">Getrunken</span>
+          </div>
+          <div class="stat-card">
+            <span id="s-spent" class="stat-val">€0</span>
+            <span class="stat-lbl">Ausgaben</span>
+          </div>
+          <div class="stat-card">
+            <span id="s-perdrop" class="stat-val">—</span>
+            <span class="stat-lbl">Pro Drop</span>
+          </div>
         </div>
-        <button id="save-backup" class="ghost-btn" type="button">Export</button>
-      </div>
-      <div class="add-pack-row">
-        <label class="field">
-          <span>Flavour</span>
-          <select id="pack-flavour"></select>
-        </label>
-        <label class="field">
-          <span>Price</span>
-          <input id="pack-price" type="text" inputmode="decimal" readonly />
-        </label>
-        <button id="add-pack" class="primary-btn" type="button">Add 12</button>
-      </div>
-      <p class="helper">Uses the official waterdrop website price for the selected flavour.</p>
-    </section>
 
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Inventory</p>
-          <h2>Your flavours</h2>
+        <div class="section">
+          <p class="section-title">Dein Vorrat</p>
+          <div id="home-stock"></div>
         </div>
-        <label class="search-wrap">
-          <span class="sr-only">Search flavours</span>
-          <input id="search" type="search" placeholder="Search flavours" />
-        </label>
-      </div>
-      <div id="inventory" class="inventory-grid"></div>
-    </section>
+      </section>
 
-    <section class="card section compact">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Backup</p>
-          <h2>Import / reset</h2>
+      <!-- ── TRINKEN ── -->
+      <section id="view-drink" class="view">
+        <header class="view-header">
+          <div>
+            <h1 class="view-title">Trinken</h1>
+            <p id="drink-sub" class="view-sub">Tippe auf einen Drop</p>
+          </div>
+        </header>
+        <div id="drink-grid" class="drink-grid"></div>
+      </section>
+
+      <!-- ── KAUFEN ── -->
+      <section id="view-add" class="view">
+        <header class="view-header">
+          <div>
+            <h1 class="view-title">Pack kaufen</h1>
+            <p class="view-sub">12 Drops pro Pack</p>
+          </div>
+        </header>
+        <div id="cat-pills" class="cat-pills" role="group" aria-label="Kategorie filtern"></div>
+        <div id="add-list" class="add-list"></div>
+      </section>
+
+      <!-- ── MEHR ── -->
+      <section id="view-more" class="view">
+        <header class="view-header">
+          <h1 class="view-title">Einstellungen</h1>
+        </header>
+
+        <div class="more-group">
+          <p class="group-label">Daten</p>
+          <button id="btn-export" class="list-row" type="button">
+            <span class="row-icon">📤</span>
+            <span class="row-text">Backup exportieren</span>
+            <span class="row-chev">›</span>
+          </button>
+          <label class="list-row file-row">
+            <span class="row-icon">📥</span>
+            <span class="row-text">Backup importieren</span>
+            <span class="row-chev">›</span>
+            <input id="import-file" type="file" accept="application/json" />
+          </label>
         </div>
-      </div>
-      <div class="backup-row">
-        <label class="file-btn">
-          <input id="import-file" type="file" accept="application/json" />
-          Import backup
-        </label>
-        <button id="reset-data" class="danger-btn" type="button">Reset all</button>
-      </div>
-      <p class="helper">Backups stay on your device. The app never sends anything to the cloud.</p>
-    </section>
 
-    <footer class="footer-note">
-      Prices and flavour list are based on the official waterdrop® website at the time of build.
-    </footer>
+        <div class="more-group">
+          <p class="group-label">Gefahr</p>
+          <button id="btn-reset" class="list-row danger-row" type="button">
+            <span class="row-icon">🗑️</span>
+            <span class="row-text">Alle Daten zurücksetzen</span>
+            <span class="row-chev">›</span>
+          </button>
+        </div>
+
+        <p class="more-footer">
+          Preise und Sorten basieren auf der offiziellen waterdrop® Website.
+        </p>
+      </section>
+
+    </main>
+
+    <!-- ── TAB BAR ── -->
+    <nav class="tab-bar" role="tablist">
+      <button class="tab-btn active" data-view="home" role="tab" aria-selected="true" aria-label="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Home</span>
+      </button>
+
+      <button class="tab-btn" data-view="drink" role="tab" aria-selected="false" aria-label="Trinken">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+        </svg>
+        <span>Trinken</span>
+      </button>
+
+      <button class="tab-btn" data-view="add" role="tab" aria-selected="false" aria-label="Pack kaufen">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        <span>Kaufen</span>
+      </button>
+
+      <button class="tab-btn" data-view="more" role="tab" aria-selected="false" aria-label="Einstellungen">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Mehr</span>
+      </button>
+    </nav>
   </div>
 
   <script src="app.js" type="module"></script>
