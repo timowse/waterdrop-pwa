@@ -147,6 +147,23 @@ function addPack(slug) {
   saveState();
   haptic([15, 60, 15]);
   showToast(`✅ 12× ${item.name} hinzugefügt`);
+  expandedSlug = null;
+  renderHome();
+  renderAdd();
+  renderDrink();
+}
+
+function addCustom(slug, amount) {
+  const item = slugToItem(slug);
+  if (!item) return;
+  const n = Math.max(1, Math.min(999, Math.trunc(Number(amount) || 0)));
+  if (!n) { showToast('Bitte eine Zahl größer als 0 eingeben'); return; }
+  state.inventory[slug] = { count: getCount(slug) + n };
+  record('adjust', slug, n, { source: 'manual-add' });
+  saveState();
+  haptic([15, 40, 15]);
+  showToast(`✅ ${n}× ${item.name} hinzugefügt`);
+  expandedSlug = null;
   renderHome();
   renderAdd();
   renderDrink();
@@ -246,7 +263,8 @@ function renderDrink(animSlug) {
 }
 
 // ── RENDER ADD ─────────────────────────────────────────────
-let activeCat = 'all';
+let activeCat    = 'all';
+let expandedSlug = null;
 
 const CATS = [
   { key: 'all',          label: 'Alle' },
@@ -269,26 +287,64 @@ function renderAdd() {
   const list     = document.getElementById('add-list');
 
   list.innerHTML = filtered.map(item => {
-    const count = getCount(item.slug);
+    const count    = getCount(item.slug);
+    const isOpen   = expandedSlug === item.slug;
+    const customForm = isOpen ? `
+      <div class="add-custom-form">
+        <input class="custom-input" type="number" min="1" max="999" inputmode="numeric"
+               placeholder="Anzahl Drops" data-slug="${esc(item.slug)}" />
+        <button class="custom-submit-btn" data-slug="${esc(item.slug)}">Hinzufügen</button>
+      </div>` : '';
     return `
-      <div class="add-row">
-        <span class="add-emoji">${item.emoji}</span>
-        <div class="add-info">
-          <div class="add-name">${esc(item.name)}</div>
-          <div class="add-meta">
-            <span class="add-stock-badge">${count} übrig</span>
-            <span class="add-cat">${esc(item.catLabel)}</span>
+      <div class="add-card">
+        <div class="add-row">
+          <span class="add-emoji">${item.emoji}</span>
+          <div class="add-info">
+            <div class="add-name">${esc(item.name)}</div>
+            <div class="add-meta">
+              <span class="add-stock-badge">${count} übrig</span>
+              <span class="add-cat">${esc(item.catLabel)}</span>
+            </div>
+          </div>
+          <div class="add-right">
+            <span class="add-price">${fmtMoney(item.price)}</span>
+            <div class="add-btns">
+              <button class="add-btn" data-slug="${esc(item.slug)}" aria-label="${esc(item.name)} Pack kaufen">+12</button>
+              <button class="add-toggle-btn${isOpen ? ' open' : ''}" data-slug="${esc(item.slug)}" aria-label="Eigene Menge">±</button>
+            </div>
           </div>
         </div>
-        <div class="add-right">
-          <span class="add-price">${fmtMoney(item.price)}</span>
-          <button class="add-btn" data-slug="${esc(item.slug)}" aria-label="${esc(item.name)} Pack kaufen">+12</button>
-        </div>
+        ${customForm}
       </div>`;
   }).join('');
 
   list.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => addPack(btn.dataset.slug));
+  });
+
+  list.querySelectorAll('.add-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      expandedSlug = expandedSlug === btn.dataset.slug ? null : btn.dataset.slug;
+      renderAdd();
+      if (expandedSlug) {
+        requestAnimationFrame(() => {
+          list.querySelector(`.custom-input[data-slug="${expandedSlug}"]`)?.focus();
+        });
+      }
+    });
+  });
+
+  list.querySelectorAll('.custom-submit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = list.querySelector(`.custom-input[data-slug="${btn.dataset.slug}"]`);
+      addCustom(btn.dataset.slug, input?.value);
+    });
+  });
+
+  list.querySelectorAll('.custom-input').forEach(input => {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addCustom(input.dataset.slug, input.value);
+    });
   });
 }
 

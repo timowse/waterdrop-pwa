@@ -401,15 +401,19 @@ button { touch-action: manipulation; cursor: pointer; }
   padding: 0 16px 16px;
 }
 
-.add-row {
+.add-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.add-row {
   padding: 14px 14px 14px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: var(--shadow);
 }
 
 .add-emoji {
@@ -467,6 +471,12 @@ button { touch-action: manipulation; cursor: pointer; }
   color: var(--muted);
 }
 
+.add-btns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 .add-btn {
   background: var(--teal);
   color: white;
@@ -482,6 +492,72 @@ button { touch-action: manipulation; cursor: pointer; }
 
 .add-btn:active {
   transform: scale(0.92);
+}
+
+.add-toggle-btn {
+  background: var(--teal-10);
+  color: var(--teal-dk);
+  border: 1.5px solid var(--teal-18);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  min-height: 40px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.add-toggle-btn.open {
+  background: var(--teal);
+  color: white;
+  border-color: var(--teal);
+}
+
+.add-custom-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 14px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.custom-input {
+  flex: 1;
+  border: 1.5px solid var(--border-med);
+  border-radius: var(--r);
+  padding: 11px 14px;
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.custom-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-10);
+}
+
+.custom-submit-btn {
+  flex-shrink: 0;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: var(--r);
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 44px;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s;
+}
+
+.custom-submit-btn:active {
+  transform: scale(0.95);
 }
 
 /* ── MORE SCREEN ── */
